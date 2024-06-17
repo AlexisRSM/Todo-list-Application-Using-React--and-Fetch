@@ -1,0 +1,38 @@
+/* div {
+    border: 2px solid red;
+} */
+
+body {
+    font-family: Playwrite NL;
+    background-color: bisque;
+}
+
+h3 {
+    padding-top: 10px;
+}
+
+button {
+
+    border-radius: 15px;
+    transition: background-color blue;
+}
+.task-item {
+    position: relative;
+}
+
+.delete-button {
+    display: none;
+}
+
+.task-item:hover .delete-button {
+    display: inline-block;
+}
+
+.task-item {
+    list-style: none;
+    border-bottom: 1px dotted #ccc;
+    text-indent: 25px;
+    height: auto;
+    padding: 10px;
+    text-transform: capitalize;
+}
