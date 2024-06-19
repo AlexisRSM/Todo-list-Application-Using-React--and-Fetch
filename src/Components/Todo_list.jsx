@@ -11,13 +11,7 @@ function handleInputChange (event){
     setNewTask(event.target.value);
 }
 
-/* function addTask(){
-    if(newTask.trim() !==""){
-        setTasks(t=>[...t,newTask]);
-        setNewTask("");
 
-    }
-} */
 function deleteTask(index){
     const updatedTasks = tasks.filter((_,i)=> i!== index);
     setTasks(updatedTasks);
@@ -36,11 +30,11 @@ function moveTaskDown(index){
         setTasks(updatedTasks);
     } 
 }
-/* const handleKeyPress = (event)=>{
+const handleKeyPress = (event)=>{
     if(event.key === 'Enter'){
-        addTask();
+        createToDo();
     }
-} */
+}
 //Todo with Fetch
 //const [taks_from_fetch,setTasksFromFetch] = useState([]);
 function deleteAllTasks () {
@@ -58,7 +52,7 @@ async function fetchData () {
     
     console.log(jsonData);
     
-    //Convert Object to Array?C
+    //Convert Object to Array?
     const tasksArray= Object.values(jsonData.todos);
     /* console.log(tasksArray); */
     setTasks(tasksArray);    
@@ -90,16 +84,29 @@ async function createToDo () {
     fetchData();
    /*  setTasks(jsonData.todos); */ 
 }
+
+//Possibe problem to comunicate with API maybe parameters
 async function deleteUpdate(updatedTasks) {
-    await fetch (URL,{
-        method:'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedTasks)
-    })
-    fetchData();
+    try {
+        const response = await fetch(URL, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedTasks)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // If the response is successful, call fetchData
+        fetchData();
+    } catch (error) {
+        console.error('Error deleting task:', error);
+    }
 }
+
 
 
 useEffect(()=>{
@@ -116,7 +123,7 @@ useEffect(()=>{
                     type="text" placeholder="Write your Tasks Here..."
                     value={newTask} 
                     onChange={handleInputChange}
-                    /* onKeyDown={handleKeyPress} */
+                    onKeyDown={handleKeyPress}
                     className='form-control me-2'/>
                     <button className="btn Add-button btn-primary"
                     style={{fontFamily:"Times"}} onClick={createToDo} >
