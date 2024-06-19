@@ -18,6 +18,7 @@ function moveTaskUp(index){ //Swap Value in Array indexes
         const updatedTasks = [...tasks];
         [updatedTasks[index],updatedTasks[index-1]] = [updatedTasks[index-1],updatedTasks[index]];
         setTasks(updatedTasks);
+        //make a post? with this order?
     }
 }
 
@@ -26,6 +27,7 @@ function moveTaskDown(index){
         const updatedTasks = [...tasks];
         [updatedTasks[index],updatedTasks[index+1]] = [updatedTasks[index+1],updatedTasks[index]];
         setTasks(updatedTasks);
+        //make a post? with this order?
     } 
 }
 const handleKeyPress = (event)=>{
@@ -34,6 +36,7 @@ const handleKeyPress = (event)=>{
     }
 }
 //Todo with Fetch
+//const [taks_from_fetch,setTasksFromFetch] = useState([]);
 function deleteAllTasks () {
     const emptyTaks = [];
     setTasks(emptyTaks);
@@ -44,8 +47,10 @@ async function fetchData () {
     });
     response.ok ? console.log("Sucessfull Fetch!") : console.log("Big Error",response.status);
     const jsonData = await response.json();
+     /* console.log(response); */
     console.log(jsonData);
     const tasksArray= jsonData.todos;
+    /* console.log(tasksArray); */
     setTasks(tasksArray);    
 }
 async function createToDo () {
@@ -64,6 +69,11 @@ async function createToDo () {
         setTasks(t=>[...t,newTask]);
         setNewTask("")
     };
+    //------------------------Debug---------------------
+    /* const jsonData = await createResponse.json(); */
+    /* console.log("Create Response",createResponse);
+    console.log(jsonData); */
+    //---------------------------------------------------
     fetchData();
 }
 
@@ -81,6 +91,18 @@ async function deleteTaskFetch(index){
     fetchData();
 }
 async function deleteAllTasks () {
+    //Another Way to Do it but it would cause dataloss of other things.
+    /*  const response_delete_user = await fetch("https://playground.4geeks.com/todo/users/Ralfe",{
+        method: 'DELETE'
+    });
+    response_delete_user = await response_delete_user.text();
+    console.log(response_delete_user);
+
+    const response_create_user = await fecth ("",{
+        method: 'POST'
+    });
+    response_create_user = await response_create_user.text();
+    console.log(response_create_user); */
     const deleteAll = tasks.map(item => fetch(`https://playground.4geeks.com/todo/todos/${item.id}`, {
         method: "DELETE"
     })
