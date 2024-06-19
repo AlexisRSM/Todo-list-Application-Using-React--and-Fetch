@@ -1,6 +1,8 @@
 import { useState,useEffect } from 'react';
 import './Styles/toDo.css'
 
+//Note in feth functions could also use axios instead of async await;
+
 function Todo_list() {
 const [tasks, setTasks] = useState([]); 
 const [newTask,setNewTask] = useState("");
@@ -11,12 +13,6 @@ function handleInputChange (event){
     setNewTask(event.target.value);
 }
 
-
-function deleteTask(index){
-    const updatedTasks = tasks.filter((_,i)=> i!== index);
-    setTasks(updatedTasks);
-    /* deleteUpdate(updatedTasks) */; //Added in desperation, not from original fuction (thought:after setting new list should run to update list)
-}
 function moveTaskUp(index){ //Swap Value in Array indexes
     if(index > 0){
         const updatedTasks = [...tasks];
@@ -24,6 +20,7 @@ function moveTaskUp(index){ //Swap Value in Array indexes
         setTasks(updatedTasks);
     }
 }
+
 function moveTaskDown(index){
     if(index < tasks.length-1){
         const updatedTasks = [...tasks];
@@ -31,6 +28,7 @@ function moveTaskDown(index){
         setTasks(updatedTasks);
     } 
 }
+
 const handleKeyPress = (event)=>{
     if(event.key === 'Enter'){
         createToDo();
@@ -50,10 +48,7 @@ async function fetchData () {
     response.ok ? console.log("Sucessfull Fetch!") : console.log("Big Error",response.status);
     const jsonData = await response.json();
      /* console.log(response); */
-    
     console.log(jsonData);
-    
-    //Convert Object to Array?
     const tasksArray= jsonData.todos;
     /* console.log(tasksArray); */
     setTasks(tasksArray);    
@@ -62,53 +57,25 @@ async function createToDo () {
     const newTaskFetch={label: newTask,
                     is_done: false
     }
-    
     const createResponse = await fetch ("https://playground.4geeks.com/todo/todos/Ralfe",{
         method:'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(newTaskFetch)
-
     });
     createResponse.ok ? console.log("Task Created  Sucessfully!") : console.log("Task Not Created!",createResponse.status);
-    
     if(newTask.trim() !==""){
         setTasks(t=>[...t,newTask]);
         setNewTask("")
     };
+    //------------------------Debug---------------------
     /* const jsonData = await createResponse.json(); */
-
     /* console.log("Create Response",createResponse);
     console.log(jsonData); */
-    
+    //---------------------------------------------------
     fetchData();
-   /*  setTasks(jsonData.todos); */ 
 }
-
-/* //Possibe problem to comunicate with API maybe parameters  //Deleting task by updating the whole list
-async function deleteUpdate(updatedTasks) {
-    console.log(updatedTasks);
-    
-    try {
-        const response = await fetch(URL, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updatedTasks)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        // If the response is successful, call fetchData
-        fetchData();
-    } catch (error) {
-        console.error('Error deleting task:', error);
-    }
-} */
 
 //Trying to use index to delete
 async function deleteTaskFetch(index){
@@ -123,14 +90,20 @@ async function deleteTaskFetch(index){
     console.log(response);
     fetchData();
 }
-
+async function deleteAllTasks () {
+    const response_delete_user = await fetch("https://playground.4geeks.com/todo/users/Ralfe",{
+        method: 'DELETE'
+    });
+    response_delete_user = await response_delete_user.text();
+    console.log(response_delete_user);
+}
 
 useEffect(()=>{
     fetchData();
 },[])
 
     return (
-        <>
+        <>"
             <div className="row py-2 mt-3"><h1>To Do List 🖊️:</h1></div>
             <div className="row List">
                 <div className="col-4"></div>
@@ -146,11 +119,11 @@ useEffect(()=>{
                         Add
                     </button>
                 </div>
-                <div className="col-4"> <button 
+                <div className="col-4"> {/* <button 
                 className='btn Delete-All btn-danger mx-2 fs-4'
                 style={{fontFamily:"Times"}}
                 onClick={deleteAllTasks}
-                >Clean All Tasks 🚮</button></div>
+                >Clean All Tasks 🚮</button> */}</div>
             </div>
             <div className="row mt-4">
                 <ol>
