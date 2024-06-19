@@ -15,6 +15,7 @@ function handleInputChange (event){
 function deleteTask(index){
     const updatedTasks = tasks.filter((_,i)=> i!== index);
     setTasks(updatedTasks);
+    deleteUpdate(updatedTasks); //Added in desperation, not from original fuction (thought:after setting new list should run to update list)
 }
 function moveTaskUp(index){ //Swap Value in Array indexes
     if(index > 0){
@@ -85,11 +86,13 @@ async function createToDo () {
    /*  setTasks(jsonData.todos); */ 
 }
 
-//Possibe problem to comunicate with API maybe parameters
+//Possibe problem to comunicate with API maybe parameters  //Deleting task by updating the whole list
 async function deleteUpdate(updatedTasks) {
+    console.log(updatedTasks);
+    
     try {
         const response = await fetch(URL, {
-            method: 'DELETE',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -107,6 +110,16 @@ async function deleteUpdate(updatedTasks) {
     }
 }
 
+    //Trying to use index to delete
+async function deleteTaskFetch(index){
+    const response = await fetch(URL, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(index)
+    });
+}
 
 
 useEffect(()=>{
