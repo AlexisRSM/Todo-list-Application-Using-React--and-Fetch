@@ -5,17 +5,19 @@ function Todo_list() {
 const [tasks, setTasks] = useState([]); 
 const [newTask,setNewTask] = useState("");
 
+const URL="https://playground.4geeks.com/todo/users/Ralfe";
+
 function handleInputChange (event){
     setNewTask(event.target.value);
 }
 
-function addTask(){
+/* function addTask(){
     if(newTask.trim() !==""){
         setTasks(t=>[...t,newTask]);
         setNewTask("");
 
     }
-}
+} */
 function deleteTask(index){
     const updatedTasks = tasks.filter((_,i)=> i!== index);
     setTasks(updatedTasks);
@@ -34,11 +36,11 @@ function moveTaskDown(index){
         setTasks(updatedTasks);
     } 
 }
-const handleKeyPress = (event)=>{
+/* const handleKeyPress = (event)=>{
     if(event.key === 'Enter'){
         addTask();
     }
-}
+} */
 //Todo with Fetch
 //const [taks_from_fetch,setTasksFromFetch] = useState([]);
 function deleteAllTasks () {
@@ -47,46 +49,59 @@ function deleteAllTasks () {
 }
 //Fetch data
 async function fetchData () {
-    const response = await fetch ("https://playground.4geeks.com/todo/users/Ralfe",{
+    const response = await fetch (URL,{
        /*  method: 'POST' */ //GET?
     });
     response.ok ? console.log("Sucessfull Fetch!") : console.log("Big Error",response.status);
-    
     const jsonData = await response.json();
-
-    /* console.log(response);
-    console.log(jsonData); */
+     /* console.log(response); */
     
-    //Convert Object to Array?
+    console.log(jsonData);
+    
+    //Convert Object to Array?C
     const tasksArray= Object.values(jsonData.todos);
-    console.log(tasksArray);
-
-    setTasks(tasksArray);
-    /* let newtry=Object.keys(jsonData.todos).map((key)=>[key,obj[key]]);
-    console.log("this is new try",newtry);
-     */
-    
+    /* console.log(tasksArray); */
+    setTasks(tasksArray);    
 }
 async function createToDo () {
-    const newTask={label: newTask,
+    const newTaskFetch={label: newTask,
                     is_done: false
     }
     
     const createResponse = await fetch ("https://playground.4geeks.com/todo/todos/Ralfe",{
-        method:'POST'
+        method:'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newTaskFetch)
+
     });
     createResponse.ok ? console.log("Task Created  Sucessfully!") : console.log("Task Not Created!",createResponse.status);
     
-    const jsonData = await createResponse.json();
+    if(newTask.trim() !==""){
+        setTasks(t=>[...t,newTask]);
+        setNewTask("")
+    };
+    /* const jsonData = await createResponse.json(); */
 
-    console.log("Create Response",createResponse);
-    console.log(jsonData);
-    addTask();
-   /*  setTasks(jsonData.todos); */
-
+    /* console.log("Create Response",createResponse);
+    console.log(jsonData); */
     
-    
+    fetchData();
+   /*  setTasks(jsonData.todos); */ 
 }
+async function deleteUpdate(updatedTasks) {
+    await fetch (URL,{
+        method:'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedTasks)
+    })
+    fetchData();
+}
+
+
 useEffect(()=>{
     fetchData();
 },[])
@@ -101,7 +116,7 @@ useEffect(()=>{
                     type="text" placeholder="Write your Tasks Here..."
                     value={newTask} 
                     onChange={handleInputChange}
-                    onKeyDown={handleKeyPress}
+                    /* onKeyDown={handleKeyPress} */
                     className='form-control me-2'/>
                     <button className="btn Add-button btn-primary"
                     style={{fontFamily:"Times"}} onClick={createToDo} >
